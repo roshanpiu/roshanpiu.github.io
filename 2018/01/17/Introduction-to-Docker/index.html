@@ -6,13 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta property="og:type" content="article">
+    <meta name="description" content="How appication deployment used to work in the pastIn order to fully understand the importance of docker containers. First we need to take a brief look at the IT history.back in the day we used to buil">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Introduction to Docker">
 <meta property="og:url" content="http://yoursite.com/2018/01/17/Introduction-to-Docker/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:updated_time" content="2018-01-17T05:06:07.835Z">
+<meta property="og:description" content="How appication deployment used to work in the pastIn order to fully understand the importance of docker containers. First we need to take a brief look at the IT history.back in the day we used to buil">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture1.PNG">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture2.PNG">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture3.PNG">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture4.PNG">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture5.PNG">
+<meta property="og:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture6.PNG">
+<meta property="og:updated_time" content="2018-01-17T07:16:39.175Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Introduction to Docker">
+<meta name="twitter:description" content="How appication deployment used to work in the pastIn order to fully understand the importance of docker containers. First we need to take a brief look at the IT history.back in the day we used to buil">
+<meta name="twitter:image" content="http://yoursite.com/content/images/introduction-to-docker-images/Capture1.PNG">
     
     
         
@@ -90,7 +100,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#How-appication-deployment-used-to-work-in-the-past"><span class="toc-number">1.</span> <span class="toc-text">How appication deployment used to work in the past</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Virtualization"><span class="toc-number">2.</span> <span class="toc-text">Virtualization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Virtual-machine-pitfalls"><span class="toc-number">3.</span> <span class="toc-text">Virtual machine pitfalls</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Containers"><span class="toc-number">4.</span> <span class="toc-text">Containers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Containers"><span class="toc-number">5.</span> <span class="toc-text">Why Containers?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Containers-under-the-hood"><span class="toc-number">6.</span> <span class="toc-text">Containers under the hood</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker"><span class="toc-number">7.</span> <span class="toc-text">Docker</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -124,7 +134,31 @@
   
 
   <div class="content" itemprop="articleBody">
-    
+    <h2 id="How-appication-deployment-used-to-work-in-the-past"><a href="#How-appication-deployment-used-to-work-in-the-past" class="headerlink" title="How appication deployment used to work in the past"></a>How appication deployment used to work in the past</h2><p>In order to fully understand the importance of docker containers. First we need to take a brief look at the IT history.<br>back in the day we used to build servers and applications in a one to one ratio (server (1) : application (1)).<br>for every application we needed to deploy we needed to buy and setup a dedicated server for it.<br>if we had 10 applications we needed 10 physical servers. that means for every application we need to deploy<br>we had to buy a server install an OS, setup storage, cooling and networking. every application needed a ton of infrastructure<br>work. this makes the process of deploying applications very tedious and very time consuming.<br>most of the time we only use the servers we built at a tiny fraction of their true capability sometimes the resource usage of the server is<br>is under 10% as you can understand this is a massive waste of resources.</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture1.PNG" alt="capture 1"></p>
+<h2 id="Virtualization"><a href="#Virtualization" class="headerlink" title="Virtualization"></a>Virtualization</h2><p>so clearly there was a problem and it needed to addressed. A solution was invented an it was virtualization.<br>we take a the physical machine and we carve it up to bunch of virtual machines.  Every virtual machine looked feels works like a physical machine. This is done by using a hypervisor layer.<br>This enabled us to run multiple applications in a single physical machine. With out a dought this was a much better model and enabled us to utilize resources of our severs<br>Better and reduce waste. Even though this approach was a massive improvement from the old model this approach was far from perfect.</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture2.PNG" alt="capture 2"></p>
+<h2 id="Virtual-machine-pitfalls"><a href="#Virtual-machine-pitfalls" class="headerlink" title="Virtual machine pitfalls"></a>Virtual machine pitfalls</h2><p>Let’s look at why the VM model was far from perfect.<br>Out of everything there is the application is the most important piece. the OS should only exists to facilitate the application. In vm model every application needs a full blown operating system. So what we have really done in the vm model Is trim off the excess of the physical layer. Even though we could run ten applications in one physical machine we needed 10 different operating systems to do that. Every OS consumes so much resources and some operating systems needs individual licensing.  OS adds no business value and each OS instance was a massive waste of resource.<br>It should be all about the application. All app needs to run is a secure isolated environment with minimal OS services and some service control. While the VM model satisfies these requirements the waste of resources and the cost is too much to overlook. As you can see the VM model is far from ideal so we needed to look for a better approach.</p>
+<h2 id="Containers"><a href="#Containers" class="headerlink" title="Containers"></a>Containers</h2><p>The solution for the bloated VM model was containers.<br>Containers are a application runtime environment. The most important difference of containers from VMs are containers are way more light weight that VMs. Each container consumes way less CPU, RAM and Disk space than a VM. But still containers provide a secure runtime environment for applications to run.<br>So how is a container is so much lighter than a VM?. In VM model we needed to install a full blown OS inside every VM. Each OS inside the VM consumes so much of CPU, RAM and Disk space.<br>On the other hand containers does not require a full blown OS for each container. It can share the OS kernel on the physical machine.</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture3.PNG" alt="capture 3"></p>
+<h2 id="Why-Containers"><a href="#Why-Containers" class="headerlink" title="Why Containers?"></a>Why Containers?</h2><p>So you might think why do we need containers? Why can’t we deploy multiple applications on a single operating system? The answer is the operating systems such as linux and windows are not so good at doing that. We don’t have a good way of isolating those applications and prevent them from working all over each other. For an example imagine there are two applications installed on the same OS both use a common shared library file but each needs a different version of that file. We don’t have a great way of doing something like having two different versions of the same file on the same OS. So this a problem that containers can address. Since containers has isolated environment of userspace each container can have different version of the same file.</p>
+<h2 id="Containers-under-the-hood"><a href="#Containers-under-the-hood" class="headerlink" title="Containers under the hood"></a>Containers under the hood</h2><p>Let’s look at how containers and their isolated environment of userspace are created.<br>In order to create an isolated environment where an application can run in. We need to create isolated instances of things like  root file systems, process trees and networking stacks.<br>This means one container can have it’s own root filesystem and one app running in a container can access and modify it’s own root file system without impacting the other applications running on other containers.</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture4.PNG" alt="capture 4"></p>
+<p>Same goes for the independent view of the process tree. Each container can have it’s own PID 0 and it’s own process hierarchy under that. This means one process inside of container will not collide with a different process in a different container</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture5.PNG" alt="capture 5"></p>
+<p>Each container gets it’s own IP address and network stack.<br>So how is this isolation is achieved?<br>This isolation is achieved via features of linux kernel called “Kernel Namespaces” , “Control Groups” and “Capabilities”.<br> Kernel Namespaces allows us to partition system namespaces such and process tree, networking, filesystem and user namespaces.<br> So from the view of the host OS there is only one process tree. But each partition of the process tree gets assigned to one container. since these containers are isolated the processes within the container can’t interact with processes outside the container<br>When we partition user namespaces we can have user accounts with root privileges inside the container but not out side of the container.<br>Control Groups allows us to group resources together and apply limits to them. So one container has it’s own control group. This enables us to set limits to CPU, Memory and Disk space the container can access.<br>capabilities gives us fine grain control over what privileges a user or a process gets. We can use capabilities to grant processes only the privileges it needs.</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>Docker is a container runtime. Which implements the container technology. It uses “Kernel Namespaces” , “Control Groups” and “Capabilities” to form one product.<br>Docker provides very uniform and standard runtime where applications can run in. This means developers can develop applications inside docker containers on their computers and package and deploy them to cloud platforms such as AWS and Azure which has a docker runtime and expect them to behave the same.</p>
+<p><img src="/content/images/introduction-to-docker-images/Capture6.PNG" alt="capture 6"></p>
+<p>Docker is actually is more than a container runtime it is more of the platform. It has</p>
+<ul>
+<li>An Image format</li>
+<li>A Container runtime</li>
+<li>Clustering</li>
+<li>Service discovery</li>
+<li>Networking</li>
+</ul>
+<p>see the extensive glossary provided by Docker (<a href="https://docs.docker.com/v1.11/engine/reference/glossary/" target="_blank" rel="noopener">https://docs.docker.com/v1.11/engine/reference/glossary/</a>).<br>Docker enables and encourages us to microservices architecture. These are types of applications designed as smaller services that operate collectively to work as one application. Each of these smaller component services runs as a single process inside of it’s own container. These components running inside it’s own container independent and can individually be updated.</p>
+
   </div>
 </article>
 
@@ -150,7 +184,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#How-appication-deployment-used-to-work-in-the-past"><span class="toc-number">1.</span> <span class="toc-text">How appication deployment used to work in the past</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Virtualization"><span class="toc-number">2.</span> <span class="toc-text">Virtualization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Virtual-machine-pitfalls"><span class="toc-number">3.</span> <span class="toc-text">Virtual machine pitfalls</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Containers"><span class="toc-number">4.</span> <span class="toc-text">Containers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Containers"><span class="toc-number">5.</span> <span class="toc-text">Why Containers?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Containers-under-the-hood"><span class="toc-number">6.</span> <span class="toc-text">Containers under the hood</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker"><span class="toc-number">7.</span> <span class="toc-text">Docker</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
